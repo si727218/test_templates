@@ -1,0 +1,33 @@
+id: graphql-detect
+
+info:
+  name: GraphQL API Detection
+  author: nkxxkn,elsfa7110,ofjaaah,exceed
+  severity: info
+  tags: tech,graphql
+
+requests:
+  - method: POST
+    path:
+      - "{{BaseURL}}/graphql"
+
+    headers:
+      Content-Type: application/json
+
+    body: '{"query":"query IntrospectionQuery{__schema {queryType { name }}}"}'
+
+    stop-at-first-match: false
+    matchers-condition: and
+    matchers:
+
+      - type: word
+        part: header
+        words:
+          - "application/json"
+
+      - type: regex
+        regex:
+          - "__schema"
+          - "(Introspection|INTROSPECTION|introspection).*?"
+          - ".*?operation not found.*?"
+        condition: or
